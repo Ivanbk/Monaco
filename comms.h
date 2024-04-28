@@ -1,10 +1,10 @@
 
-#ifndef comms_H
-#define comms_H
+#ifndef COMMS_H
+#define COMMS_H
 
 
 #include "BotleticsSIM7000.h"
-Botletics_modem_LTE modem = Botletics_modem_LTE();
+//extern Botletics_modem_LTE modem;
 
 //Board Specific Definitions
 #define UART_BAUD           9600
@@ -15,22 +15,24 @@ Botletics_modem_LTE modem = Botletics_modem_LTE();
 
 #define samplingRate 10 //Seconds
 
-char imei[16] = {0}; //Device ID
-uint8_t type;
-uint16_t battLevel = 0; // Battery level (percentage)
-float latitude, longitude, speed_kph, heading, altitude, second;
-uint16_t year;
-uint8_t month, day, hour, minute;
-uint8_t counter = 0;
 
-char URL[200];  // Make sure this is long enough for your request URL
-char body[100]; // Make sure this is long enough for POST body
-char latBuff[12], longBuff[12], locBuff[50], speedBuff[12],
+extern char imei[16];
+extern uint8_t type;
+extern uint16_t battLevel;
+extern float latitude, longitude, speed_kph, heading, altitude, second;
+extern uint16_t year;
+extern uint8_t month, day, hour, minute;
+extern uint8_t counter;
+
+extern char URL[200];  // Make sure this is long enough for your request URL
+extern char body[100]; // Make sure this is long enough for POST body
+extern char latBuff[12], longBuff[12], locBuff[50], speedBuff[12],
      headBuff[12], altBuff[12], tempBuff[12], battBuff[12];
 
 void initComms();
 bool netStatus();
-
+bool getGPS();
+void sendToServer();
 
 
 
