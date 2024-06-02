@@ -41,18 +41,18 @@ void initComms(){
         Serial.println(imei);
     }
     modem.setFunctionality(1);
-    /* Adittional Functions & Configurations
+    //Adittional Functions & Configurations
     modem.setPreferredMode(38); // Use LTE only, not 2G
     modem.setPreferredLTEMode(1); // Use LTE CAT-M only, not NB-IoT
-    modem.setOperatingBand("CAT-M", 12); // AT&T uses band 12
-    modem.setNetworkSettings(F("your APN"), F("your username"), F("your password")); //Configure if neccesary
-    modem.setHTTPSRedirect(true); //Uncomment if you want to use HTTPS
-    modem.enableSleepMode(true);
-    modem.set_eDRX(1, 4, "0010");
-    modem.enablePSM(true);
-    modem.setNetLED(true, 2, 64, 3000); // on/off, mode, timer_on, timer_off
-    modem.setNetLED(false); // Disable network status LED
-    */
+    //modem.setOperatingBand("CAT-M", 12); // AT&T uses band 12
+    //modem.setNetworkSettings(F("your APN"), F("your username"), F("your password")); //Configure if neccesary
+    //modem.setHTTPSRedirect(true); //Uncomment if you want to use HTTPS
+    //modem.enableSleepMode(true);
+    //modem.set_eDRX(1, 4, "0010");
+    //modem.enablePSM(true);
+    //modem.setNetLED(true, 2, 64, 3000); // on/off, mode, timer_on, timer_off
+    //modem.setNetLED(false); // Disable network status LED
+    
 
     // Initialize GPS
     while (!modem.enableGPS(true)) {
@@ -63,14 +63,14 @@ void initComms(){
 
     // Initialize GPRS
     //Missing  if !modem.enableGPRS(false) before while
-    /*
+    
     
     while (!modem.enableGPRS(true)) {
         Serial.println(F("Failed to enable GPRS, retrying..."));
         delay(2000); // Retry every 2s
     }
     Serial.println(F("Enabled GPRS!"));
-    */
+    
 }
 
 
@@ -105,11 +105,16 @@ bool getGPS() {
     }
 }
 
-/*
+//Reading of CAN data for battery level
+bool getBattery(){
+    
+}
+
+
 
 void sendToServer() {
     // Create the URL
-    sprintf(URL, "http://yourserver.com/yourscript.php?lat=%s&lon=%s&speed=%s&heading=%s&alt=%s&temp=%s&batt=%s", latBuff, longBuff, speedBuff, headBuff, altBuff, tempBuff, battBuff);
+    sprintf(URL, "http://beckfam.asuscomm.com/test/%s", imei);
     Serial.print(F("URL: ")); Serial.println(URL);
 
     // Create the body
@@ -117,7 +122,8 @@ void sendToServer() {
     Serial.print(F("Body: ")); Serial.println(body);
 
     // Send the data
-    if (modem.HTTP_POST(URL, body)) {
+    modem.HTTP_connect(server);
+    if (modem.HTTP_POST(URL, body, 90)) {
         Serial.println(F("Data sent successfully!"));
     }
     else {
@@ -125,7 +131,7 @@ void sendToServer() {
     }
 }
 
-*/
+
 
 
 

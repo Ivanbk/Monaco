@@ -4,6 +4,7 @@
 
 
 #include "BotleticsSIM7000.h"
+#include "CAN.h"
 //extern Botletics_modem_LTE modem;
 
 //Board Specific Definitions
@@ -14,6 +15,7 @@
 #define PWR_PIN             4
 
 #define samplingRate 10 //Seconds
+#define server "beckfam.asuscomm.com:1880"
 
 
 extern char imei[16];
@@ -32,6 +34,7 @@ extern char latBuff[12], longBuff[12], locBuff[50], speedBuff[12],
 void initComms();
 bool netStatus();
 bool getGPS();
+bool getBattery();
 void sendToServer();
 
 

@@ -3,6 +3,9 @@
 //#include "gps.h";
 #include "comms.h";
 #include "timer.h";
+#include "display.h";
+#include "control.h";
+#include "CAN.h";
 
 void setup() {
   Serial.begin(115200);
@@ -18,6 +21,7 @@ void loop() {
     Serial.println("Timer fired");
     timer_fired = false;
     getGPS();
+    
   }
 
   while (Serial1.available()) {
