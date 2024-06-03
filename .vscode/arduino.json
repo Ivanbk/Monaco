@@ -1,6 +1,6 @@
 {
-    "configuration": "FlashSize=4M,PSRAM=enabled,PartitionScheme=default,CPUFreq=240,FlashMode=qio,FlashFreq=80,UploadSpeed=921600,DebugLevel=none,EraseFlash=none",
-    "board": "esp32:esp32:esp32wroverkit",
+    "configuration": "FlashFreq=80,PartitionScheme=default,CPUFreq=240,UploadSpeed=921600,DebugLevel=verbose,EraseFlash=none",
+    "board": "esp32:esp32:lolin32",
     "port": "COM3",
     "programmer": "esptool",
     "sketch": "Monaco.ino"

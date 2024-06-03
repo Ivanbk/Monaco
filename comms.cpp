@@ -42,10 +42,10 @@ void initComms(){
     }
     modem.setFunctionality(1);
     //Adittional Functions & Configurations
-    modem.setPreferredMode(38); // Use LTE only, not 2G
-    modem.setPreferredLTEMode(1); // Use LTE CAT-M only, not NB-IoT
+    //modem.setPreferredMode(38); // Use LTE only, not 2G
+    //modem.setPreferredLTEMode(1); // Use LTE CAT-M only, not NB-IoT
     //modem.setOperatingBand("CAT-M", 12); // AT&T uses band 12
-    //modem.setNetworkSettings(F("your APN"), F("your username"), F("your password")); //Configure if neccesary
+    modem.setNetworkSettings(F("bam.entelpcs.cl")); //Configure if neccesary
     //modem.setHTTPSRedirect(true); //Uncomment if you want to use HTTPS
     //modem.enableSleepMode(true);
     //modem.set_eDRX(1, 4, "0010");

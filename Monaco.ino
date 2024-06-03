@@ -10,6 +10,7 @@
 void setup() {
   Serial.begin(115200);
   setupTimer(1500000);
+  //display_init();
   initComms();
 
 }
@@ -21,7 +22,13 @@ void loop() {
     Serial.println("Timer fired");
     timer_fired = false;
     getGPS();
-    
+    //lcd.print("Lat: ");
+    //lcd.setCursor(4, 0);
+    //lcd.print(latitude, 6);
+    //lcd.setCursor(0, 1);
+    //lcd.print("Long: ");
+    //lcd.setCursor(6, 1);
+    //lcd.print(longitude, 6);
   }
 
   while (Serial1.available()) {
