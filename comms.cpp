@@ -46,20 +46,18 @@ void initComms(){
     //modem.setPreferredLTEMode(1); // Use LTE CAT-M only, not NB-IoT
     //modem.setOperatingBand("CAT-M", 12); // AT&T uses band 12
     modem.setNetworkSettings(F("bam.entelpcs.cl")); //Configure if neccesary
-    //modem.setHTTPSRedirect(true); //Uncomment if you want to use HTTPS
+    modem.setHTTPSRedirect(true); //Uncomment if you want to use HTTPS
     //modem.enableSleepMode(true);
     //modem.set_eDRX(1, 4, "0010");
     //modem.enablePSM(true);
     //modem.setNetLED(true, 2, 64, 3000); // on/off, mode, timer_on, timer_off
     //modem.setNetLED(false); // Disable network status LED
-    
+
+    //Necessary configurations for Entel Chile
+    modem.sendCheckReply("AT+COPS=1,2,\"73001\"", "OK", 10000); //Set Operator
+    modem.sendCheckReply("AT+CSTT=\"bam.entelpcs.cl\"", "OK", 10000); //Set APN
 
     // Initialize GPS
-    while (!modem.enableGPS(true)) {
-        Serial.println(F("Failed to turn on GPS, retrying..."));
-        delay(2000); // Retry every 2s
-    }
-    Serial.println(F("Turned on GPS!"));
 
     // Initialize GPRS
     //Missing  if !modem.enableGPRS(false) before while
@@ -70,6 +68,13 @@ void initComms(){
         delay(2000); // Retry every 2s
     }
     Serial.println(F("Enabled GPRS!"));
+
+    // Initialize GPS
+    while (!modem.enableGPS(true)) {
+        Serial.println(F("Failed to turn on GPS, retrying..."));
+        delay(2000); // Retry every 2s
+    }
+    Serial.println(F("Turned on GPS!"));
     
 }
 
@@ -111,7 +116,7 @@ bool getBattery(){
 }
 
 
-
+/*
 void sendToServer() {
     // Create the URL
     sprintf(URL, "http://beckfam.asuscomm.com/test/%s", imei);
@@ -130,7 +135,27 @@ void sendToServer() {
         Serial.println(F("Failed to send data"));
     }
 }
+*/
 
+void sendToServer() {
+    // Create the URL
+    sprintf(URL, "https://label-service-twvszsnmba-uc.a.run.app/docs");
+    Serial.print(F("URL: ")); Serial.println(URL);
+
+    // Create the body
+    // sprintf(body, "{\"lat\":%s,\"lon\":%s,\"speed\":%s,\"heading\":%s,\"alt\":%s,\"temp\":%s,\"batt\":%s}", latBuff, longBuff, speedBuff, headBuff, altBuff, tempBuff, battBuff);
+    // Serial.print(F("Body: ")); Serial.println(body);
+
+    // Send the data
+    modem.HTTP_connect("https://label-service-twvszsnmba-uc.a.run.app");
+    //modem.HTTP_addHeader("Content-Type", "application/json", 13);
+    if (modem.HTTP_GET(URL)) {
+        Serial.println(F("Data sent successfully!"));
+    }
+    else {
+        Serial.println(F("Failed to send data"));
+    }
+}
 
 
 

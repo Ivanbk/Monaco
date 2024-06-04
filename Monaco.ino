@@ -9,10 +9,9 @@
 
 void setup() {
   Serial.begin(115200);
-  setupTimer(1500000);
   //display_init();
   initComms();
-
+  setupTimer(1500000);
 }
 
 void loop() {
@@ -22,6 +21,7 @@ void loop() {
     Serial.println("Timer fired");
     timer_fired = false;
     getGPS();
+    sendToServer();
     //lcd.print("Lat: ");
     //lcd.setCursor(4, 0);
     //lcd.print(latitude, 6);
