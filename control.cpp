@@ -4,6 +4,7 @@
 
 const int touchPin = 4; // El pin que se usará para el sensor táctil
 const int bocinaPin = 33; // El pin conectado al relé para la bocina
+const int latchRelay = 30; //Latching relay pin
 const int contactorPin = 32; // El pin conectado al relé-contactor para cortar la energía
 const int threshold = 50; // Umbral de sensibilidad del sensor táctil
 const int numReadings = 10; // Número de lecturas para la media móvil

@@ -20,9 +20,24 @@ uint16_t year;
 uint8_t month, day, hour, minute;
 uint8_t counter = 0;
 char URL[200];  // Make sure this is long enough for your request URL
-char body[100]; // Make sure this is long enough for POST body
+char body[200]; // Make sure this is long enough for POST body
 char latBuff[12], longBuff[12], locBuff[50], speedBuff[12],
      headBuff[12], altBuff[12], tempBuff[12], battBuff[12];
+
+
+
+
+int countBackslashes(const char* str) {
+    int count = 0;
+    for (int i = 0; str[i] != '\0'; i++) {
+        if (str[i] == '\\') {
+            count++;
+        }
+    }
+    return count;
+}
+
+
 
 void initComms(){
     Serial.println("Initializing comms");
@@ -34,40 +49,42 @@ void initComms(){
         Serial.println(F("Couldn't find modem"));
         while (1); // Don't proceed if it couldn't find the device
     }
-    uint8_t imeiLen = modem.getIMEI(imei);
-    Serial.println("Getting IMEI");
-    if (imeiLen > 0) {
-        Serial.print("Module IMEI: "); 
-        Serial.println(imei);
-    }
-    modem.setFunctionality(1);
+    //uint8_t imeiLen = modem.getIMEI(imei);
+    //Serial.println("Getting IMEI");
+    //if (imeiLen > 0) {
+    //    Serial.print("Module IMEI: "); 
+    //    Serial.println(imei);
+    //}
+    //modem.setFunctionality(1);
     //Adittional Functions & Configurations
     //modem.setPreferredMode(38); // Use LTE only, not 2G
     //modem.setPreferredLTEMode(1); // Use LTE CAT-M only, not NB-IoT
     //modem.setOperatingBand("CAT-M", 12); // AT&T uses band 12
-    modem.setNetworkSettings(F("bam.entelpcs.cl")); //Configure if neccesary
-    modem.setHTTPSRedirect(true); //Uncomment if you want to use HTTPS
+    modem.setHTTPSRedirect(false); //Uncomment if you want to use HTTPS
     //modem.enableSleepMode(true);
     //modem.set_eDRX(1, 4, "0010");
     //modem.enablePSM(true);
     //modem.setNetLED(true, 2, 64, 3000); // on/off, mode, timer_on, timer_off
     //modem.setNetLED(false); // Disable network status LED
 
-    //Necessary configurations for Entel Chile
-    modem.sendCheckReply("AT+COPS=1,2,\"73001\"", "OK", 10000); //Set Operator
-    modem.sendCheckReply("AT+CSTT=\"bam.entelpcs.cl\"", "OK", 10000); //Set APN
-
-    // Initialize GPS
-
-    // Initialize GPRS
-    //Missing  if !modem.enableGPRS(false) before while
+    //Necessary configurations for Claro Chile
+    modem.setNetworkSettings(F("bam.clarochile.cl")); //Set APN
+    modem.sendCheckReply("AT+COPS=1,2,\"73003\"", "OK", 10000); //Set Operator, to find operator number (73003 for claro chile) use "AT+COPS=?"
+    delay(2000);
+    modem.sendCheckReply("AT+CSTT=\"bam.clarochile.cl\"", "OK", 10000); //Set APN Manual
     
     
-    while (!modem.enableGPRS(true)) {
-        Serial.println(F("Failed to enable GPRS, retrying..."));
+    if(!modem.enableGPRS(true)) {
+        //reboot ESP32
+        Serial.println(F("Failed to enable GPRS, rebooting..."));
+        ESP.restart();
         delay(2000); // Retry every 2s
     }
     Serial.println(F("Enabled GPRS!"));
+    Serial.print("Connected with IP: ");
+    //Serial.println(modem.getIPAddress());
+    modem.sendCheckReply("AT+CIFSR", "OK", 10000); //Get IPAddress
+
 
     // Initialize GPS
     while (!modem.enableGPS(true)) {
@@ -116,27 +133,32 @@ bool getBattery(){
 }
 
 
-/*
+
 void sendToServer() {
     // Create the URL
-    sprintf(URL, "http://beckfam.asuscomm.com/test/%s", imei);
+    sprintf(URL, "http://beckfam.asuscomm.com:3001/monitoringdata/");
     Serial.print(F("URL: ")); Serial.println(URL);
 
     // Create the body
-    sprintf(body, "{\"lat\":%s,\"lon\":%s,\"speed\":%s,\"heading\":%s,\"alt\":%s,\"temp\":%s,\"batt\":%s}", latBuff, longBuff, speedBuff, headBuff, altBuff, tempBuff, battBuff);
+    
+    sprintf(body, "{\\\"generic1_lat\\\":%f,\\\"generic1_lon\\\":%f,\\\"speed\\\":%s,\\\"temp\\\":%s,\\\"batt\\\":%s,\\\"team\\\":\\\"%s\\\"}",latitude, longitude, "10.0", "25.0", "98", "gxv3AWTxzmJEHUCaQz5AW3wyhAWsUQ5X");
+
     Serial.print(F("Body: ")); Serial.println(body);
 
     // Send the data
     modem.HTTP_connect(server);
-    if (modem.HTTP_POST(URL, body, 90)) {
+    modem.HTTP_addHeader("Content-Type", "application/json", 16);
+
+
+    if (modem.HTTP_POST(URL, body, strlen(body)-countBackslashes(body))) {
         Serial.println(F("Data sent successfully!"));
     }
     else {
         Serial.println(F("Failed to send data"));
     }
 }
-*/
 
+/*
 void sendToServer() {
     // Create the URL
     sprintf(URL, "https://label-service-twvszsnmba-uc.a.run.app/docs");
@@ -156,7 +178,6 @@ void sendToServer() {
         Serial.println(F("Failed to send data"));
     }
 }
-
-
+*/
 
 
